@@ -1,5 +1,8 @@
 #pragma once
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
-#include <easylogging++.h>
+namespace Log {
+    void init();
+}
 
-INITIALIZE_EASYLOGGINGPP

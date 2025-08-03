@@ -1,7 +1,7 @@
 #include "log/log.hpp"
 
-int main(int argc, char** argv) {
-    START_EASYLOGGINGPP(argc, argv);
-    LOG(INFO) << "MVE Player starting up";
+int main() {
+    Log::init();
+    spdlog::info("Starting .mve player");
     return 0;
 }
