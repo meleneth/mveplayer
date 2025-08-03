@@ -18,3 +18,21 @@ pkg_check_modules(SDL3 REQUIRED sdl3)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+
+add_executable(mveplayer
+	src/main.cpp       
+)
+
+target_include_directories(mveplayer
+       	PRIVATE 
+	${SDL3_INCLUDE_DIRS} 
+	sdplog::spdlog
+)
+
+target_link_libraries(mveplayer
+	PRIVATE
+	mve
+	${SDL3_LIBRARIES} 
+	spdlog::spdlog
+)
+
