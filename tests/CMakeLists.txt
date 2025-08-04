@@ -11,7 +11,15 @@ target_link_libraries(mve_tests
     PRIVATE
         mve
         Catch2::Catch2WithMain
+        spdlog::spdlog
 )
+
+target_include_directories(mve_tests
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
+        sdplog::spdlog
+)
+
 
 # Test discovery integration
 include(CTest)
