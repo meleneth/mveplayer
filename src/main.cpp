@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
     size_t chunk_index = 0;
     while (auto chunk = decoder.next_chunk()) {
-        spdlog::info("Chunk {}: type=0x{:04x}, opcodes={}", chunk_index++, chunk->chunk_type, chunk->opcodes.size());
+        spdlog::info("Chunk {}: type=0x{:04x}", chunk_index++, chunk->type());
     }
 
     spdlog::info("Done.");

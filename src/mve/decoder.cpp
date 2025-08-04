@@ -17,9 +17,9 @@ bool Decoder::valid() const {
 }
 
 bool Decoder::parse_header() {
-  constexpr std::array<char, 20> expected = {
-    'I','n','t','e','r','p','l','a','y',' ','M','V','E',' ','F','i','l','e', 0x1A, 0x00
-  };
+    constexpr std::array<char, 20> expected = {
+      'I','n','t','e','r','p','l','a','y',' ','M','V','E',' ','F','i','l','e', 0x1A, 0x00
+    };
 
     std::array<char, 20> signature;
     input_.read(signature.data(), 20);
@@ -42,7 +42,7 @@ bool Decoder::parse_header() {
     return true;
 }
 
-std::unique_ptr<Decoder::DecodedChunk> Decoder::next_chunk() {
+std::unique_ptr<Chunk> Decoder::next_chunk() {
     if (!input_ || input_.eof())
         return nullptr;
 
@@ -57,9 +57,8 @@ std::unique_ptr<Decoder::DecodedChunk> Decoder::next_chunk() {
         return nullptr;
     }
 
-    spdlog::warn("got a chunk of size {}", chunk_length);
-
     std::vector<uint8_t> chunk_data(chunk_length);
+    std::streamoff chunk_start_offset = input_.tellg();
 
     input_.read(reinterpret_cast<char*>(chunk_data.data()), chunk_length);
     if (input_.gcount() != chunk_length) {
@@ -75,16 +74,9 @@ std::unique_ptr<Decoder::DecodedChunk> Decoder::next_chunk() {
         hex_preview += buf;
     }
 
-    if (!input_) {
-        spdlog::error("Failed to skip chunk data");
-        return nullptr;
-    }
-
-    auto chunk = std::make_unique<DecodedChunk>();
-    chunk->chunk_type = chunk_type;
-    chunk->opcodes.clear(); // empty for now
+		auto chunk = std::make_unique<Chunk>(chunk_type, std::move(chunk_data));
+		//chunk->parse_opcodes();
     
-    std::streamoff chunk_start_offset = input_.tellg();
     spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {} | preview: {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length, hex_preview);
 
     return chunk;

@@ -28,6 +28,6 @@ TEST_CASE("Decoder parses a synthetic valid MVE stream") {
 
     auto chunk = decoder.next_chunk();
     REQUIRE(chunk != nullptr);
-    REQUIRE(chunk->chunk_type == 11);
+    REQUIRE(chunk->type() == 11);
     //REQUIRE(chunk->opcodes.size() == 1); // not yet handling opcodes
 }

@@ -1,24 +1,26 @@
 #pragma once
 #include <cstdint>
-#include <memory>
 #include <vector>
+#include <memory>
+
+#include <mve/opcode/opcode.hpp>
 
 namespace mve {
 
-enum class OpcodeType : uint8_t {
-    EndOfStream = 0,
-    CreateTimer = 1,
-    InitAudioBuffers = 2,
-    VideoData = 7,
-    Unknown
+class Chunk {
+public:
+    Chunk(uint16_t type, std::vector<uint8_t>&& data);
+
+    uint16_t type() const;
+    size_t size() const;
+
+    void parse_opcodes();  // safe to call multiple times
+    const std::vector<std::unique_ptr<Opcode>>& opcodes() const;
+
+private:
+    uint16_t type_;
+    std::vector<uint8_t> raw_data_;
+    std::vector<std::unique_ptr<Opcode>> opcodes_;
 };
 
-struct Chunk {
-    OpcodeType opcode;
-    uint16_t size;
-    std::vector<uint8_t> data;
-
-    static Chunk parse(std::istream& input);
-};
-
-} // namespace mve
+}
