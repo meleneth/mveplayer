@@ -29,6 +29,10 @@ int main(int argc, char* argv[]) {
     size_t chunk_index = 0;
     while (auto chunk = decoder.next_chunk()) {
         spdlog::info("Chunk {}: type=0x{:04x}", chunk_index++, chunk->type());
+        int opcode_index = 0;
+        for(const auto& opcode : chunk->opcodes()) {
+          spdlog::info("  Opcode #{} - {}: length={} type={} version={}", opcode_index++, opcode->name(), opcode->data().size(), opcode->type(), opcode->version());
+        }
     }
 
     spdlog::info("Done.");

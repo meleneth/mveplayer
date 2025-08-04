@@ -75,7 +75,7 @@ std::unique_ptr<Chunk> Decoder::next_chunk() {
     }
 
 		auto chunk = std::make_unique<Chunk>(chunk_type, std::move(chunk_data));
-		//chunk->parse_opcodes();
+		chunk->parse_opcodes();
     
     spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {} | preview: {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length, hex_preview);
 
