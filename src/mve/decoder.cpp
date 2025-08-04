@@ -59,8 +59,22 @@ std::unique_ptr<Decoder::DecodedChunk> Decoder::next_chunk() {
 
     spdlog::warn("got a chunk of size {}", chunk_length);
 
-    // Just skip the data
-    input_.ignore(chunk_length);
+    std::vector<uint8_t> chunk_data(chunk_length);
+
+    input_.read(reinterpret_cast<char*>(chunk_data.data()), chunk_length);
+    if (input_.gcount() != chunk_length) {
+        spdlog::error("Failed to read full chunk data");
+        return nullptr;
+    }
+
+    size_t preview_size = std::min<size_t>(8, chunk_data.size());
+    std::string hex_preview;
+    for (size_t i = 0; i < preview_size; ++i) {
+        char buf[4];
+        std::snprintf(buf, sizeof(buf), "%02X ", chunk_data[i]);
+        hex_preview += buf;
+    }
+
     if (!input_) {
         spdlog::error("Failed to skip chunk data");
         return nullptr;
@@ -71,7 +85,7 @@ std::unique_ptr<Decoder::DecodedChunk> Decoder::next_chunk() {
     chunk->opcodes.clear(); // empty for now
     
     std::streamoff chunk_start_offset = input_.tellg();
-    spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length);
+    spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {} | preview: {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length, hex_preview);
 
     return chunk;
 }
