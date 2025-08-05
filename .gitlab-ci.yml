@@ -25,12 +25,12 @@ build:
     - cmake --build ${BUILD_DIR}
   artifacts:
     paths:
-      - ${BUILD_DIR}
+      - ${BUILD_DIR}/mveplayer
 
 test:
   stage: test
   script:
-    - ${BUILD_DIR}/mve_tests
+    - ${BUILD_DIR}/tests/mve_tests
   artifacts:
     when: always
     reports:
