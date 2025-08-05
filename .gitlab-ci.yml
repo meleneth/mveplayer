@@ -10,7 +10,7 @@ variables:
   LCOV_OPTS: "--rc lcov_branch_coverage=1"
 
 default:
-  image: gcc:latest
+  image: debian:trixie
 
 before_script:
   - apt-get update -qq && apt-get install -y cmake lcov ninja-build sdl3
