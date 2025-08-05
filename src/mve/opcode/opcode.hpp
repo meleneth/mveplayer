@@ -20,6 +20,8 @@ public:
 
     virtual std::string name() const { return "GenericOpcode"; }
 
+    virtual void process() const { }
+
     const std::vector<uint8_t>& data() const { return payload_; }
 
 protected:
