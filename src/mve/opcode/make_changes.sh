@@ -1,0 +1,13 @@
+opcode_end_of_stream.hpp
+opcode_end_of_chunk.hpp
+opcode_create_timer.hpp
+opcode_start_stop_audio.hpp
+opcode_start_stop_audio.hpp
+opcode_send_buffer_to_display.hpp
+opcode_audio_frame_data.hpp
+opcode_audio_frame_silence.hpp
+opcode_intialize_video_mode.hpp
+opcode_create_gradient.hpp
+opcode_set_palette.hpp
+opcode_set_palette_entries_compressed.hpp
+opcode_set_decoding_map.hpp
