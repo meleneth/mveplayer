@@ -1,19 +1,29 @@
 #include <fstream>
 #include <iostream>
 
+#include <CLI/CLI.hpp>
+
 #include <log/log.hpp>
 #include <mve/decoder.hpp>
 
 int main(int argc, char* argv[]) {
-    spdlog::set_level(spdlog::level::info);
+    CLI::App app{"MVEPlayer"};
+
+    bool debug = false;
+    std::string filename;
+
+    app.add_flag("-d,--debug", debug, "Enable debug logging");
+    app.add_option("input", filename, "Path to MVE file")
+      ->required()
+      ->check(CLI::ExistingFile);
+
+    CLI11_PARSE(app, argc, argv);
+
+    spdlog::set_level(debug ? spdlog::level::debug : spdlog::level::info);
     spdlog::set_pattern("[%H:%M:%S] [%^%l%$] %v");
+    spdlog::info("Starting up...");
 
-    if (argc < 2) {
-        spdlog::error("Usage: {} <filename.mve>", argv[0]);
-        return 1;
-    }
 
-    const char* filename = argv[1];
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
         spdlog::error("Failed to open file: {}", filename);

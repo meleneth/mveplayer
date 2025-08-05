@@ -35,7 +35,7 @@ void Chunk::parse_opcodes() {
         std::size_t remaining = raw_data_.size() - offset;
         std::size_t total_len = 4 + payload_len;
 
-        spdlog::info("parse_opcodes: {}", hex_dump(std::span(data, std::min<std::size_t>(remaining, 16))));
+        spdlog::debug("parse_opcodes: {}", hex_dump(std::span(data, std::min<std::size_t>(remaining, 16))));
 
         if (remaining < total_len) {
             spdlog::warn("Truncated or invalid opcode in chunk:");

@@ -11,6 +11,7 @@ include(cmake/CPM.cmake)
 # Add dependencies
 CPMAddPackage("gh:catchorg/Catch2@3.5.2")
 CPMAddPackage("gh:gabime/spdlog@1.13.0")
+CPMAddPackage("gh:CLIUtils/CLI11#main")
 
 list(APPEND CMAKE_MODULE_PATH "${Catch2_SOURCE_DIR}/extras")
 
@@ -34,5 +35,5 @@ target_link_libraries(mveplayer
     mve
     ${SDL3_LIBRARIES}
     spdlog::spdlog
+    CLI11::CLI11
 )
-
