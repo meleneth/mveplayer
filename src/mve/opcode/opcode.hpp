@@ -11,7 +11,7 @@ namespace mve {
 class Opcode {
 public:
     Opcode(uint8_t type, uint8_t version, std::span<const uint8_t> payload)
-        : type_(type), version_(version), payload_(payload.begin(), payload.end()) {}
+        : type_(type), version_(version), payload_(payload) {}
 
     virtual ~Opcode() = default;
 
@@ -22,12 +22,12 @@ public:
 
     virtual void process() const { }
 
-    const std::vector<uint8_t>& data() const { return payload_; }
+    const std::span<const uint8_t> data() const { return payload_; }
 
 protected:
     uint8_t type_;
     uint8_t version_;
-    std::vector<uint8_t> payload_;
+    std::span<const uint8_t> payload_;
 };
 
 /// Factory function to build an opcode based on its type byte

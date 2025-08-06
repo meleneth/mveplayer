@@ -54,10 +54,8 @@ void Chunk::parse_opcodes() {
             break;
         }
 
-        std::vector<uint8_t> payload(
-            raw_data_.begin() + offset + 4,
-            raw_data_.begin() + offset + 4 + payload_len
-        );
+        const uint8_t* payload_data = data + 4;
+        std::span<const uint8_t> payload(payload_data, payload_len);
 
         auto opcode = decode_opcode(type, version, payload);
         if (opcode) {
