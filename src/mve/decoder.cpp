@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include <mve/decoder.hpp>
+#include <mve/hex_dump.hpp>
 
 namespace mve {
 
@@ -66,18 +67,10 @@ std::unique_ptr<Chunk> Decoder::next_chunk() {
         return nullptr;
     }
 
-    size_t preview_size = std::min<size_t>(8, chunk_data.size());
-    std::string hex_preview;
-    for (size_t i = 0; i < preview_size; ++i) {
-        char buf[4];
-        std::snprintf(buf, sizeof(buf), "%02X ", chunk_data[i]);
-        hex_preview += buf;
-    }
+    spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {} | preview: {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length, hex_dump(chunk_data));
 
-		auto chunk = std::make_unique<Chunk>(chunk_type, std::move(chunk_data));
-		chunk->parse_opcodes();
-    
-    spdlog::info("Chunk @ offset 0x{:08x}: type = 0x{:04x}, size = {} | preview: {}", static_cast<std::uint32_t>(chunk_start_offset), chunk_type, chunk_length, hex_preview);
+    auto chunk = std::make_unique<Chunk>(chunk_type, std::move(chunk_data));
+    chunk->parse_opcodes();
 
     return chunk;
 }

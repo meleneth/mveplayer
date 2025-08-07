@@ -44,13 +44,7 @@ void Chunk::parse_opcodes() {
             spdlog::warn("  claimed payload_len = {}", payload_len);
             spdlog::warn("  remaining bytes     = {}", remaining);
             spdlog::warn("  type/version        = 0x{:02x} / 0x{:02x}", type, version);
-
-            std::ostringstream bad_bytes;
-            for (std::size_t i = 0; i < std::min<std::size_t>(16, remaining); ++i) {
-                bad_bytes << std::hex << std::setw(2) << std::setfill('0')
-                          << static_cast<int>(raw_data_[offset + i]) << " ";
-            }
-            spdlog::warn("  next 16 bytes: {}", bad_bytes.str());
+            spdlog::warn("  bytes: {}", hex_dump(std::span(data, std::min<std::size_t>(remaining, 16))));
             break;
         }
 

@@ -14,9 +14,9 @@ public:
         : Opcode(type, version, payload.size() > 6 ? payload.subspan(6) : std::span<const uint8_t>{})
     {
         if (payload.size() != 8) {
-            // I thought this was supposed to be six?
+            // I thought this should be 6?
             spdlog::error("    payload for {} was {} bytes! [{}]", name(), payload.size(), hex_dump(payload));
-            throw std::runtime_error("OpcodeInitializeVideoBuffer: payload must be exactly 6 bytes");
+            throw std::runtime_error("OpcodeInitializeVideoBuffer: payload must be exactly 8 bytes");
         }
 
         x_resolution = payload[0] | (payload[1] << 8);
