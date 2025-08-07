@@ -15,7 +15,7 @@ CPMAddPackage("gh:CLIUtils/CLI11#main")
 
 list(APPEND CMAKE_MODULE_PATH "${Catch2_SOURCE_DIR}/extras")
 
-pkg_check_modules(SDL3 REQUIRED sdl3)
+#pkg_check_modules(SDL3 REQUIRED sdl3)
 
 add_subdirectory(src)
 add_subdirectory(tests)
@@ -26,14 +26,14 @@ add_executable(mveplayer
 
 target_include_directories(mveplayer
   PRIVATE
-    ${SDL3_INCLUDE_DIRS}
+#    ${SDL3_INCLUDE_DIRS}
     sdplog::spdlog
 )
 
 target_link_libraries(mveplayer
  PRIVATE
     mve
-    ${SDL3_LIBRARIES}
+#    ${SDL3_LIBRARIES}
     spdlog::spdlog
     CLI11::CLI11
 )
