@@ -2,14 +2,15 @@
 
 namespace mve {
 
-
 class OpcodeSetPalette : public Opcode {
 public:
-    using Opcode::Opcode;
+    OpcodeSetPalette(uint8_t type, uint8_t version, const std::span<const uint8_t> payload);
 
-    std::string name() const override {
-        return "OpcodeSetPalette";
-    }
+    std::string name() const override;
+    void process(MoviePlayer &movie_player) const override;
+
+    uint16_t pal_start;
+    uint16_t pal_count;
 };
 
 };

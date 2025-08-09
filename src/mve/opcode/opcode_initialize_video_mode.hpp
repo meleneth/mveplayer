@@ -5,11 +5,13 @@ namespace mve {
 
 class OpcodeInitializeVideoMode : public Opcode {
 public:
-    using Opcode::Opcode;
+    OpcodeInitializeVideoMode(uint8_t type, uint8_t version, const std::span<const uint8_t> payload);
+    std::string name() const override;
+    void process(MoviePlayer &movie_player) const override;
 
-    std::string name() const override {
-        return "OpcodeInitializeVideoMode";
-    }
+    uint16_t x_resolution;
+    uint16_t y_resolution;
+    uint16_t flags;
 };
 
 };

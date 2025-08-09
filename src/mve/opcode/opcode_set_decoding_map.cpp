@@ -10,7 +10,7 @@ std::string OpcodeSetDecodingMap::name() const {
 
 void OpcodeSetDecodingMap::process(MoviePlayer &movie_player) const
 {
-  spdlog::info("    SetDecodingMap()");
+  spdlog::info("    SetDecodingMap(payload.size={})", payload_.size());
   movie_player.set_decoding_map(this);
 }
 

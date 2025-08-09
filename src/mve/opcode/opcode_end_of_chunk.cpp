@@ -1,3 +1,4 @@
+#include<log/log.hpp>
 #include<mve/opcode/opcode_end_of_chunk.hpp>
 #include<mve/opcode/movie_player.hpp>
 
@@ -10,6 +11,7 @@ std::string OpcodeEndOfChunk::name() const
 
 void OpcodeEndOfChunk::process(MoviePlayer &movie_player) const
 {
+  spdlog::info("    OpcodeEndOfChunk()");
   movie_player.set_decoding_map(nullptr);
 }
 
