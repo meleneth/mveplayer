@@ -7,6 +7,29 @@
 
 namespace mve {
 
+#pragma pack(push, 1)
+struct MPRGB8 {
+  uint8_t r{0}, g{0}, b{0};
+};
+
+union MPPackedRGB18LE {
+  struct {
+    uint8_t b0, b1, b2; // raw 3 bytes
+  } raw;
+
+  struct {
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    unsigned r : 6;
+    unsigned g : 6;
+    unsigned b : 6;
+    unsigned _pad : 8; // top 8 bits unused
+#else
+#  error "This layout assumes little-endian bitfield ordering."
+#endif
+  } f;
+};
+#pragma pack(pop)
+
 struct ExpandedPalette {
   uint8_t red;
   uint8_t green;
@@ -29,9 +52,17 @@ public:
   void set_decoding_map(const OpcodeSetDecodingMap *decoding_map);
 
   const OpcodeSetDecodingMap *decoding_map;
+
+  void set_palette(std::size_t index, uint8_t r, uint8_t g, uint8_t b);
+  void set_palette_from_18bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6);
+  const std::vector<MPRGB8>& palette() const noexcept { return palette_; }
+  void ensure_palette_size(std::size_t size);
+  uint8_t expand6to8(uint8_t v6) noexcept;
+
 private:
   std::unique_ptr<Buffer> current_frame;
   std::unique_ptr<Buffer> last_frame;
+  std::vector<MPRGB8> palette_;
 };
 
 }
