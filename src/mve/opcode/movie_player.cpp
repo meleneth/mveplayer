@@ -4,7 +4,7 @@ namespace mve {
 
 MoviePlayer::MoviePlayer()
 {
-
+  decoding_map = nullptr;
 }
 
 void MoviePlayer::swap_buffers() noexcept
@@ -30,6 +30,11 @@ Buffer&       MoviePlayer::last() noexcept
 const Buffer& MoviePlayer::last() const noexcept
 {
   return *last_frame;
+}
+
+void MoviePlayer::set_decoding_map(const OpcodeSetDecodingMap *decoding_map)
+{
+  this->decoding_map = decoding_map;
 }
 
 }

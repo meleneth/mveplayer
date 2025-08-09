@@ -6,7 +6,7 @@
 #include <mve/opcode/buffer.hpp>
 
 namespace mve {
-
+class OpcodeSetDecodingMap;
 class MoviePlayer {
 public:
   MoviePlayer();
@@ -19,6 +19,9 @@ public:
   Buffer&       last() noexcept;
   const Buffer& last() const noexcept;
 
+  void set_decoding_map(const OpcodeSetDecodingMap *decoding_map);
+
+  const OpcodeSetDecodingMap *decoding_map;
 private:
   std::unique_ptr<Buffer> current_frame;
   std::unique_ptr<Buffer> last_frame;

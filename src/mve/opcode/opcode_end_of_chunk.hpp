@@ -7,9 +7,8 @@ class OpcodeEndOfChunk : public Opcode {
 public:
     using Opcode::Opcode;
 
-    std::string name() const override {
-        return "OpcodeEndOfChunk";
-    }
+    std::string name() const override;
+    void process(MoviePlayer &movie_player) const override;
 };
 
 };
