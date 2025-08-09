@@ -1,6 +1,7 @@
 #include<log/log.hpp>
 #include<mve/hex_dump.hpp>
 #include<mve/opcode/opcode.hpp>
+#include<mve/opcode/movie_player.hpp>
 #include<mve/opcode/opcode_initialize_video_buffer.hpp>
 
 namespace mve {
@@ -24,8 +25,9 @@ std::string OpcodeInitializeVideoBuffer::name() const {
     return "OpcodeInitializeVideoBuffer";
 }
 
-void OpcodeInitializeVideoBuffer::process() const {
+void OpcodeInitializeVideoBuffer::process(MoviePlayer &movie_player) const {
   spdlog::info("    InitializeVideoBuffer(x={}, y={}, flags={})", x_resolution, y_resolution, flags);
+  (void)movie_player;
 }
 
 

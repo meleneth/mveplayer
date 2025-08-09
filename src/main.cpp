@@ -5,6 +5,7 @@
 
 #include <log/log.hpp>
 #include <mve/decoder.hpp>
+#include <mve/opcode/movie_player.hpp>
 
 int main(int argc, char* argv[]) {
     CLI::App app{"MVEPlayer"};
@@ -36,13 +37,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    mve::MoviePlayer movie_player;
+
     size_t chunk_index = 0;
     while (auto chunk = decoder.next_chunk()) {
         spdlog::info("Chunk {}: type=0x{:04x}", chunk_index++, chunk->type());
         int opcode_index = 0;
         for(const auto& opcode : chunk->opcodes()) {
           spdlog::info("  Opcode #{} - {}: length={} type={} version={}", opcode_index++, opcode->name(), opcode->data().size(), opcode->type(), opcode->version());
-          opcode->process();
+          opcode->process(movie_player);
         }
     }
 

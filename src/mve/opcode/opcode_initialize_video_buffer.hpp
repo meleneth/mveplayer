@@ -4,6 +4,8 @@
 
 namespace mve {
 
+class MoviePlayer;
+
 class OpcodeInitializeVideoBuffer : public Opcode {
 public:
     uint16_t x_resolution;
@@ -13,7 +15,7 @@ public:
     OpcodeInitializeVideoBuffer(uint8_t type, uint8_t version, const std::span<const uint8_t> payload);
 
     std::string name() const override;
-    void process() const override;
+    void process(MoviePlayer &movie_player) const override;
 };
 
 

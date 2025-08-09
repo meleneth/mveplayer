@@ -8,6 +8,8 @@
 
 namespace mve {
 
+class MoviePlayer;
+
 class Opcode {
 public:
     Opcode(uint8_t type, uint8_t version, std::span<const uint8_t> payload)
@@ -20,7 +22,7 @@ public:
 
     virtual std::string name() const { return "GenericOpcode"; }
 
-    virtual void process() const { }
+    virtual void process(MoviePlayer & movie_player) const { }
 
     const std::span<const uint8_t> data() const { return payload_; }
 
