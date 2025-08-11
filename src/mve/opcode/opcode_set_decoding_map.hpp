@@ -9,6 +9,7 @@ public:
 
     std::string name() const override;
     void process(MoviePlayer &movie_player) const override;
+    void count_encodings() const;
 };
 
 };
