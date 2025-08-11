@@ -8,7 +8,7 @@
 
 #include "bytes.hpp"
 
-TEST_CASE("OpcodeSetPalette parses pal_start and pal_count correctly from raw payload_00")
+TEST_CASE("OpcodeVideoData#process_encoding_00 copies current_frame to next_frame for block")
 {
   using namespace mve;
 
