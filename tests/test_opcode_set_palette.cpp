@@ -15,7 +15,7 @@ TEST_CASE("OpcodeSetPalette parses pal_start and pal_count correctly from raw pa
   std::vector<uint8_t> raw_payload = {
     0x01, 0x00,  // pal_start = 1
     0x01, 0x00,  // pal_count = 1
-    0x8c, 0x05, 0x02
+    0x11, 0x22, 0x33
   };
 
   std::span<const uint8_t> payload(raw_payload);
@@ -29,7 +29,8 @@ TEST_CASE("OpcodeSetPalette parses pal_start and pal_count correctly from raw pa
 
   opcode.process(movie_player);
 
-  REQUIRE(movie_player.palette()[1].r == 48);
-  REQUIRE(movie_player.palette()[1].g == 89);
-  REQUIRE(movie_player.palette()[1].b == 130);
+  // wrong
+  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].r) == 69);
+  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].g) == 138);
+  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].b) == 207);
 }

@@ -38,15 +38,13 @@ void OpcodeSetPalette::process(MoviePlayer &movie_player) const
   const std::size_t count = payload_.size() / 3;
   movie_player.ensure_palette_size(pal_start + pal_count);
 
-  MPPackedRGB18LE u{};
   for (std::size_t i = 0; i < count; ++i) {
-    const auto rec = payload_.subspan(i * 3, 3);
-    std::memcpy(&u.raw, rec.data(), 3);
+    std::size_t offset = i * 3;
 
-    movie_player.set_palette_from_18bit(pal_start + i,
-      static_cast<uint8_t>(u.f.r),
-      static_cast<uint8_t>(u.f.g),
-      static_cast<uint8_t>(u.f.b)
+    movie_player.set_palette_from_6bit(pal_start + i,
+      payload_[offset],
+      payload_[offset + 1],
+      payload_[offset + 2]
     );
   }
 }

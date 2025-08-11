@@ -58,7 +58,7 @@ void MoviePlayer::set_palette(std::size_t index, uint8_t r, uint8_t g, uint8_t b
   palette_[index] = MPRGB8{r, g, b};
 }
 
-void MoviePlayer::set_palette_from_18bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6)
+void MoviePlayer::set_palette_from_6bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6)
 {
   set_palette(index, expand6to8(r6), expand6to8(g6), expand6to8(b6));
 }
