@@ -1,5 +1,9 @@
 #include <mve/opcode/movie_player.hpp>
 
+#include <memory>    // for std::unique_ptr, std::make_unique
+#include <vector>    // for std::vector<uint8_t>
+#include <cstdint>   // for uint8_t
+
 namespace mve {
 
 MoviePlayer::MoviePlayer()
@@ -9,27 +13,7 @@ MoviePlayer::MoviePlayer()
 
 void MoviePlayer::swap_buffers() noexcept
 {
-  std::swap(current_frame, last_frame);
-}
-
-Buffer&       MoviePlayer::current() noexcept
-{
-  return *current_frame;
-}
-
-const Buffer& MoviePlayer::current() const noexcept
-{
-  return *current_frame;
-}
-
-Buffer&       MoviePlayer::last() noexcept
-{
-  return *last_frame;
-}
-
-const Buffer& MoviePlayer::last() const noexcept
-{
-  return *last_frame;
+  std::swap(current_frame, new_frame);
 }
 
 void MoviePlayer::set_decoding_map(const OpcodeSetDecodingMap *decoding_map)
@@ -61,6 +45,14 @@ void MoviePlayer::set_palette(std::size_t index, uint8_t r, uint8_t g, uint8_t b
 void MoviePlayer::set_palette_from_6bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6)
 {
   set_palette(index, expand6to8(r6), expand6to8(g6), expand6to8(b6));
+}
+
+void MoviePlayer::allocate_video_buffer(std::size_t x_blocks, std::size_t y_blocks)
+{
+  std::size_t total_pixels = x_blocks * y_blocks;
+  pitch = y_blocks * 8 * 3;
+  current_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
+  new_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
 }
 
 }

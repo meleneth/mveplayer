@@ -7,9 +7,9 @@ namespace mve {
 
 class Buffer {
 public:
-    Buffer();
-private:
-    std::vector<uint8_t> raw_data_;
+    explicit Buffer(std::size_t num_bytes)
+      : raw_data(num_bytes, 0) {};
+    std::vector<uint8_t> raw_data;
 };
 
 }

@@ -12,17 +12,6 @@ struct MPRGB8 {
   uint8_t r{0}, g{0}, b{0};
 };
 
-union MPPackedRGB18LE {
-  struct {
-    uint8_t b0, b1, b2; // raw 3 bytes
-  } raw;
-
-  struct {
-    unsigned r;
-    unsigned g;
-    unsigned b;
-  } f;
-};
 #pragma pack(pop)
 
 struct ExpandedPalette {
@@ -38,12 +27,6 @@ public:
 
   void swap_buffers() noexcept;
 
-  Buffer&       current() noexcept;
-  const Buffer& current() const noexcept;
-
-  Buffer&       last() noexcept;
-  const Buffer& last() const noexcept;
-
   void set_decoding_map(const OpcodeSetDecodingMap *decoding_map);
 
   const OpcodeSetDecodingMap *decoding_map;
@@ -54,10 +37,19 @@ public:
   void ensure_palette_size(std::size_t size);
   uint8_t expand6to8(uint8_t v6) noexcept;
 
-private:
+  void allocate_video_buffer(std::size_t x_blocks, std::size_t y_blocks);
+
   std::unique_ptr<Buffer> current_frame;
-  std::unique_ptr<Buffer> last_frame;
+  std::unique_ptr<Buffer> new_frame;
   std::vector<MPRGB8> palette_;
+
+  uint16_t x_pixels;
+  uint16_t y_pixels;
+  uint16_t x_blocks;
+  uint16_t y_blocks;
+  uint16_t pitch;
+
+private:
 };
 
 }
