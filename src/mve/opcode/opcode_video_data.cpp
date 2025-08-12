@@ -35,6 +35,81 @@ void OpcodeVideoData::process_encoding_01(int x, int y, MoviePlayer &movie_playe
   (void)y;
 }
 
+void OpcodeVideoData::process_encoding_02(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+  stream_index++;
+}
+
+void OpcodeVideoData::process_encoding_03(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+  stream_index++;
+}
+
+void OpcodeVideoData::process_encoding_04(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+  stream_index++;
+}
+
+void OpcodeVideoData::process_encoding_05(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+  stream_index++;
+  stream_index++;
+}
+
+void OpcodeVideoData::process_encoding_06(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+}
+
+void OpcodeVideoData::process_encoding_07(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+  int p0 = payload_[stream_index++];
+  int p1 = payload_[stream_index++];
+  if (p0 <= p1) {
+    stream_index += 8;
+  } else {
+    stream_index += 2;
+  }
+}
+
+void OpcodeVideoData::process_encoding_08(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+}
+
+void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+}
+
+void OpcodeVideoData::process_encoding_0a(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+}
+
 void OpcodeVideoData::process_encoding_0b(int block_x, int block_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
