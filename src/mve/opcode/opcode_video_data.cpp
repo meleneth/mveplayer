@@ -161,4 +161,50 @@ void OpcodeVideoData::process_encoding_0d(int block_x, int block_y, MoviePlayer 
   }
 }
 
+void OpcodeVideoData::process_encoding_0e(int block_x, int block_y, MoviePlayer &movie_player)
+{
+  auto& new_frame_data = movie_player.new_frame->raw_data;
+  int base_y = block_y * 8;
+  (void)block_x;
+
+  auto &palette_entry = movie_player.palette[payload_[stream_index]];
+  stream_index++;
+
+  for(int y = 0; y < 8; ++y) {
+    int frame_pixel =  (base_y + y) * movie_player.pitch;
+
+    new_frame_data[frame_pixel    ] = palette_entry.r;
+    new_frame_data[frame_pixel + 1] = palette_entry.g;
+    new_frame_data[frame_pixel + 2] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 3] = palette_entry.r;
+    new_frame_data[frame_pixel + 4] = palette_entry.g;
+    new_frame_data[frame_pixel + 5] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 6] = palette_entry.r;
+    new_frame_data[frame_pixel + 7] = palette_entry.g;
+    new_frame_data[frame_pixel + 8] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 9 ] = palette_entry.r;
+    new_frame_data[frame_pixel + 10] = palette_entry.g;
+    new_frame_data[frame_pixel + 11] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 12] = palette_entry.r;
+    new_frame_data[frame_pixel + 13] = palette_entry.g;
+    new_frame_data[frame_pixel + 14] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 15] = palette_entry.r;
+    new_frame_data[frame_pixel + 16] = palette_entry.g;
+    new_frame_data[frame_pixel + 17] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 18] = palette_entry.r;
+    new_frame_data[frame_pixel + 19] = palette_entry.g;
+    new_frame_data[frame_pixel + 20] = palette_entry.b;
+
+    new_frame_data[frame_pixel + 21] = palette_entry.r;
+    new_frame_data[frame_pixel + 22] = palette_entry.g;
+    new_frame_data[frame_pixel + 23] = palette_entry.b;
+  }
+}
+
 };
