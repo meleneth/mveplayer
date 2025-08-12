@@ -35,4 +35,22 @@ void OpcodeVideoData::process_encoding_01(int x, int y, MoviePlayer &movie_playe
   (void)y;
 }
 
+void OpcodeVideoData::process_encoding_0b(int block_x, int block_y, MoviePlayer &movie_player)
+{
+  auto& new_frame_data = movie_player.new_frame->raw_data;
+  int base_x = block_x * 8;
+  int base_y = block_y * 8;
+
+  for(int y = 0; y < 8; ++y) {
+    for(int x=0; x<8; ++x) {
+      int frame_pixel = ((base_x + x) * 3) + ((base_y + y) * movie_player.pitch);
+      auto &palette_entry = movie_player.palette[payload_[stream_index]];
+      new_frame_data[frame_pixel    ] = palette_entry.r;
+      new_frame_data[frame_pixel + 1] = palette_entry.g;
+      new_frame_data[frame_pixel + 2] = palette_entry.b;
+      stream_index++;
+    }
+  }
+}
+
 };

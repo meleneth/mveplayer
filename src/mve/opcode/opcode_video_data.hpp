@@ -12,6 +12,9 @@ public:
     void process(MoviePlayer &movie_player) const override;
     void process_encoding_00(int x, int y, MoviePlayer &movie_player);
     void process_encoding_01(int x, int y, MoviePlayer &movie_player);
+    void process_encoding_0b(int x, int y, MoviePlayer &movie_player);
+
+    uint16_t stream_index = 0;
 };
 
 };

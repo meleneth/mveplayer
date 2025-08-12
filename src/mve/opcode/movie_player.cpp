@@ -29,17 +29,17 @@ uint8_t MoviePlayer::expand6to8(uint8_t v6) noexcept
 
 void MoviePlayer::ensure_palette_size(std::size_t size)
 {
-  if (palette_.size() < size) {
-    palette_.resize(size);
+  if (palette.size() < size) {
+    palette.resize(size);
   }
 }
 
 void MoviePlayer::set_palette(std::size_t index, uint8_t r, uint8_t g, uint8_t b)
 {
-  if (index >= palette_.size()) {
-    palette_.resize(index + 1);
+  if (index >= palette.size()) {
+    palette.resize(index + 1);
   }
-  palette_[index] = MPRGB8{r, g, b};
+  palette[index] = MPRGB8{r, g, b};
 }
 
 void MoviePlayer::set_palette_from_6bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6)

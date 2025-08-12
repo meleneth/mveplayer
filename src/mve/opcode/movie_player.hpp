@@ -33,7 +33,6 @@ public:
 
   void set_palette(std::size_t index, uint8_t r, uint8_t g, uint8_t b);
   void set_palette_from_6bit(std::size_t index, uint8_t r6, uint8_t g6, uint8_t b6);
-  const std::vector<MPRGB8>& palette() const noexcept { return palette_; }
   void ensure_palette_size(std::size_t size);
   uint8_t expand6to8(uint8_t v6) noexcept;
 
@@ -41,7 +40,7 @@ public:
 
   std::unique_ptr<Buffer> current_frame;
   std::unique_ptr<Buffer> new_frame;
-  std::vector<MPRGB8> palette_;
+  std::vector<MPRGB8> palette;
 
   uint16_t x_pixels;
   uint16_t y_pixels;

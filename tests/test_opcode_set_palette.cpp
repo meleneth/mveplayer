@@ -30,7 +30,7 @@ TEST_CASE("OpcodeSetPalette parses pal_start and pal_count correctly from raw pa
   opcode.process(movie_player);
 
   // wrong
-  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].r) == 69);
-  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].g) == 138);
-  REQUIRE(static_cast<uint16_t>(movie_player.palette()[1].b) == 207);
+  REQUIRE(static_cast<uint16_t>(movie_player.palette[1].r) == 69);
+  REQUIRE(static_cast<uint16_t>(movie_player.palette[1].g) == 138);
+  REQUIRE(static_cast<uint16_t>(movie_player.palette[1].b) == 207);
 }

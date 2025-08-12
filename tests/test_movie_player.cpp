@@ -9,9 +9,9 @@ TEST_CASE("MoviePlayer set_palette_data")
   
   movie_player.set_palette(1, 48, 88, 128);
 
-  REQUIRE(movie_player.palette()[1].r == 48);
-  REQUIRE(movie_player.palette()[1].g == 88);
-  REQUIRE(movie_player.palette()[1].b == 128);
+  REQUIRE(movie_player.palette[1].r == 48);
+  REQUIRE(movie_player.palette[1].g == 88);
+  REQUIRE(movie_player.palette[1].b == 128);
 }
 
 TEST_CASE("MoviePlayer#allocate_video_buffer()")
