@@ -28,4 +28,11 @@ void OpcodeVideoData::process_encoding_00(int x, int y, MoviePlayer &movie_playe
   }
 }
 
+void OpcodeVideoData::process_encoding_01(int x, int y, MoviePlayer &movie_player)
+{
+  (void)movie_player;
+  (void)x;
+  (void)y;
+}
+
 };
