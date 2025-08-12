@@ -75,17 +75,87 @@ void OpcodeVideoData::process_encoding_06(int x, int y, MoviePlayer &movie_playe
   (void)y;
 }
 
-void OpcodeVideoData::process_encoding_07(int x, int y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer &movie_player)
 {
-  (void)movie_player;
-  (void)x;
-  (void)y;
   int p0 = payload_[stream_index++];
   int p1 = payload_[stream_index++];
+
+  auto &palette_entry_0 = movie_player.palette[p0];
+  auto &palette_entry_1 = movie_player.palette[p1];
+
+  auto& new_frame_data = movie_player.new_frame->raw_data;
+
+  int base_x = block_x * 8;
+  int base_y = block_y * 8;
+
   if (p0 <= p1) {
-    stream_index += 8;
+    for(int y = 0; y < 8 ; ++y) {
+      uint8_t pattern = payload_[stream_index++];
+      int bit = 1;
+      for(int x = 0; x < 8 ; ++x) {
+        int frame_pixel = ((base_x + x) * 3) + ((base_y + y) * movie_player.pitch);
+        if(bit & pattern) {
+          new_frame_data[frame_pixel    ] = palette_entry_1.r;
+          new_frame_data[frame_pixel + 1] = palette_entry_1.g;
+          new_frame_data[frame_pixel + 2] = palette_entry_1.b;
+        } else {
+          new_frame_data[frame_pixel    ] = palette_entry_0.r;
+          new_frame_data[frame_pixel + 1] = palette_entry_0.g;
+          new_frame_data[frame_pixel + 2] = palette_entry_0.b;
+        }
+        bit <<= 1;
+      }
+    }
   } else {
-    stream_index += 2;
+    uint8_t b0 = payload_[stream_index++];
+    uint8_t b1 = payload_[stream_index++];
+    std::array<uint8_t, 4> nibbles{
+      static_cast<uint8_t>(b0 & 0x0f),
+      static_cast<uint8_t>(b0 >> 4),
+      static_cast<uint8_t>(b1 & 0x0f),
+      static_cast<uint8_t>(b1 >> 4),
+    };
+    for(int y = 0; y < 4 ; ++y) {
+      int bit=1;
+      for(int x = 0; x < 4; ++x) {
+        int frame_pixel = ((base_x + (x* 2)) * 3) + ((base_y + (y * 2)) * movie_player.pitch);
+        // TODO likely reversed
+        if(bit & nibbles[y]) {
+          new_frame_data[frame_pixel    ] = palette_entry_0.r;
+          new_frame_data[frame_pixel + 1] = palette_entry_0.g;
+          new_frame_data[frame_pixel + 2] = palette_entry_0.b;
+
+          new_frame_data[frame_pixel + 3] = palette_entry_0.r;
+          new_frame_data[frame_pixel + 4] = palette_entry_0.g;
+          new_frame_data[frame_pixel + 5] = palette_entry_0.b;
+
+          new_frame_data[frame_pixel     + movie_player.pitch] = palette_entry_0.r;
+          new_frame_data[frame_pixel + 1 + movie_player.pitch] = palette_entry_0.g;
+          new_frame_data[frame_pixel + 2 + movie_player.pitch] = palette_entry_0.b;
+
+          new_frame_data[frame_pixel + 3 + movie_player.pitch] = palette_entry_0.r;
+          new_frame_data[frame_pixel + 4 + movie_player.pitch] = palette_entry_0.g;
+          new_frame_data[frame_pixel + 5 + movie_player.pitch] = palette_entry_0.b;
+        } else {
+          new_frame_data[frame_pixel    ] = palette_entry_1.r;
+          new_frame_data[frame_pixel + 1] = palette_entry_1.g;
+          new_frame_data[frame_pixel + 2] = palette_entry_1.b;
+
+          new_frame_data[frame_pixel + 3] = palette_entry_1.r;
+          new_frame_data[frame_pixel + 4] = palette_entry_1.g;
+          new_frame_data[frame_pixel + 5] = palette_entry_1.b;
+
+          new_frame_data[frame_pixel     + movie_player.pitch] = palette_entry_1.r;
+          new_frame_data[frame_pixel + 1 + movie_player.pitch] = palette_entry_1.g;
+          new_frame_data[frame_pixel + 2 + movie_player.pitch] = palette_entry_1.b;
+
+          new_frame_data[frame_pixel + 3 + movie_player.pitch] = palette_entry_1.r;
+          new_frame_data[frame_pixel + 4 + movie_player.pitch] = palette_entry_1.g;
+          new_frame_data[frame_pixel + 5 + movie_player.pitch] = palette_entry_1.b;
+        }
+        bit <<= 1;
+      }
+    }
   }
 }
 
