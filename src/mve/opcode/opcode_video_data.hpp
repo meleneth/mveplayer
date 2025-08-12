@@ -14,6 +14,7 @@ public:
     void process_encoding_01(int x, int y, MoviePlayer &movie_player);
     void process_encoding_0b(int x, int y, MoviePlayer &movie_player);
     void process_encoding_0c(int x, int y, MoviePlayer &movie_player);
+    void process_encoding_0d(int x, int y, MoviePlayer &movie_player);
 
     uint16_t stream_index = 0;
 };
