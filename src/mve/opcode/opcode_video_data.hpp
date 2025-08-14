@@ -1,4 +1,5 @@
 #include<mve/opcode/opcode.hpp>
+#include<mve/opcode/movie_player.hpp>
 
 namespace mve {
 
@@ -9,6 +10,8 @@ public:
 
     std::string name() const override;
 
+    void set_frame_pixel(MoviePlayer &movie_player, int pixel_x, int pixel_y, bool which_palette, MPRGB8 &palette_0, MPRGB8 &palette_1);
+
     void process(MoviePlayer &movie_player) const override;
     void process_encoding_00(int x, int y, MoviePlayer &movie_player);
     void process_encoding_01(int x, int y, MoviePlayer &movie_player);
@@ -18,6 +21,7 @@ public:
     void process_encoding_05(int x, int y, MoviePlayer &movie_player);
     void process_encoding_06(int x, int y, MoviePlayer &movie_player);
     void process_encoding_07(int x, int y, MoviePlayer &movie_player);
+    void helper_08_1(int line_x, int line_y, uint8_t p0, uint8_t p1, uint8_t bitmap, MoviePlayer &movie_player);
     void process_encoding_08(int x, int y, MoviePlayer &movie_player);
     void process_encoding_09(int x, int y, MoviePlayer &movie_player);
     void process_encoding_0a(int x, int y, MoviePlayer &movie_player);

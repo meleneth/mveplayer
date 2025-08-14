@@ -91,10 +91,10 @@ void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer 
   if (p0 <= p1) {
     for(int y = 0; y < 8 ; ++y) {
       uint8_t pattern = payload_[stream_index++];
-      int bit = 1;
+      int mask = 128;
       for(int x = 0; x < 8 ; ++x) {
         int frame_pixel = ((base_x + x) * 3) + ((base_y + y) * movie_player.pitch);
-        if(bit & pattern) {
+        if(mask & pattern) {
           new_frame_data[frame_pixel    ] = palette_entry_1.r;
           new_frame_data[frame_pixel + 1] = palette_entry_1.g;
           new_frame_data[frame_pixel + 2] = palette_entry_1.b;
@@ -103,24 +103,23 @@ void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer 
           new_frame_data[frame_pixel + 1] = palette_entry_0.g;
           new_frame_data[frame_pixel + 2] = palette_entry_0.b;
         }
-        bit <<= 1;
+        mask >>= 1;
       }
     }
   } else {
     uint8_t b0 = payload_[stream_index++];
     uint8_t b1 = payload_[stream_index++];
     std::array<uint8_t, 4> nibbles{
-      static_cast<uint8_t>(b0 & 0x0f),
       static_cast<uint8_t>(b0 >> 4),
-      static_cast<uint8_t>(b1 & 0x0f),
+      static_cast<uint8_t>(b0 & 0x0f),
       static_cast<uint8_t>(b1 >> 4),
+      static_cast<uint8_t>(b1 & 0x0f),
     };
     for(int y = 0; y < 4 ; ++y) {
-      int bit=1;
+      int mask = 8;
       for(int x = 0; x < 4; ++x) {
         int frame_pixel = ((base_x + (x* 2)) * 3) + ((base_y + (y * 2)) * movie_player.pitch);
-        // TODO likely reversed
-        if(bit & nibbles[y]) {
+        if(mask & nibbles[y]) {
           new_frame_data[frame_pixel    ] = palette_entry_0.r;
           new_frame_data[frame_pixel + 1] = palette_entry_0.g;
           new_frame_data[frame_pixel + 2] = palette_entry_0.b;
@@ -153,17 +152,112 @@ void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer 
           new_frame_data[frame_pixel + 4 + movie_player.pitch] = palette_entry_1.g;
           new_frame_data[frame_pixel + 5 + movie_player.pitch] = palette_entry_1.b;
         }
-        bit <<= 1;
+        mask >>= 1;
       }
     }
   }
 }
 
-void OpcodeVideoData::process_encoding_08(int x, int y, MoviePlayer &movie_player)
+void OpcodeVideoData::set_frame_pixel(MoviePlayer &movie_player, int pixel_x, int pixel_y, bool which_palette, MPRGB8 &palette_0, MPRGB8 &palette_1)
 {
-  (void)movie_player;
-  (void)x;
-  (void)y;
+    int frame_pixel = ( pixel_x * 3) + ( pixel_y * movie_player.pitch);
+    auto& new_frame_data = movie_player.new_frame->raw_data;
+
+    if(which_palette) {
+      new_frame_data[frame_pixel    ] = palette_1.r;
+      new_frame_data[frame_pixel + 1] = palette_1.g;
+      new_frame_data[frame_pixel + 2] = palette_1.b;
+    } else {
+      new_frame_data[frame_pixel    ] = palette_0.r;
+      new_frame_data[frame_pixel + 1] = palette_0.g;
+      new_frame_data[frame_pixel + 2] = palette_0.b;
+  }
+}
+
+void OpcodeVideoData::helper_08_1(int line_x, int line_y, uint8_t p0, uint8_t p1, uint8_t bitmap, MoviePlayer &movie_player)
+{
+    auto &palette_entry_0 = movie_player.palette[p0];
+    auto &palette_entry_1 = movie_player.palette[p1];
+    int mask = 128;
+    for(int x = 0; x < 4; ++x) {
+      set_frame_pixel(movie_player, line_x + x, line_y, bitmap & mask, palette_entry_0, palette_entry_1);
+      mask >>= 1;
+    }
+    ++line_y;
+    for(int x = 0; x < 4; ++x) {
+      set_frame_pixel(movie_player, line_x + x, line_y, bitmap & mask, palette_entry_0, palette_entry_1);
+      mask >>= 1;
+    }
+}
+
+void OpcodeVideoData::process_encoding_08(int base_x, int base_y, MoviePlayer &movie_player)
+{
+  int p0 = payload_[stream_index++];
+  int p1 = payload_[stream_index++];
+
+  //auto &palette_entry_0 = movie_player.palette[p0];
+  //auto &palette_entry_1 = movie_player.palette[p1];
+
+  if(p0 <= p1) {
+    int b0 = payload_[stream_index++];
+    int b1 = payload_[stream_index++];
+
+    helper_08_1(base_x, base_y,     p0, p1, b0, movie_player);
+    helper_08_1(base_x, base_y + 2, p0, p1, b1, movie_player);
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+
+    helper_08_1(base_x + 4, base_y,     p0, p1, b0, movie_player);
+    helper_08_1(base_x + 4, base_y + 2, p0, p1, b1, movie_player);
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+
+    helper_08_1(base_x, base_y + 4, p0, p1, b0, movie_player);
+    helper_08_1(base_x, base_y + 6, p0, p1, b1, movie_player);
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+
+    helper_08_1(base_x + 4, base_y + 4, p0, p1, b0, movie_player);
+    helper_08_1(base_x + 4, base_y + 6, p0, p1, b1, movie_player);
+  } else {
+    int b0 = payload_[stream_index++];
+    int b1 = payload_[stream_index++];
+    int b2 = payload_[stream_index++];
+    int b3 = payload_[stream_index++];
+    int p2 = payload_[stream_index++];
+    int p3 = payload_[stream_index++];
+    int b4 = payload_[stream_index++];
+    int b5 = payload_[stream_index++];
+    int b6 = payload_[stream_index++];
+    int b7 = payload_[stream_index++];
+    if(p2 <=p3) {
+      
+    } else {
+
+    }
+    (void)b0;
+    (void)b1;
+    (void)b2;
+    (void)b3;
+    (void)b4;
+    (void)b5;
+    (void)b6;
+    (void)b7;
+    (void)p0;
+    (void)p1;
+    (void)p2;
+    (void)p3;
+  }
+
 }
 
 void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_player)

@@ -102,6 +102,19 @@ struct BytesEqualWindow : Catch::Matchers::MatcherBase<std::vector<uint8_t>> {
         size_t act_end = actual.empty() ? 0 : std::min(actual.size() - 1, diff + after);
 
         std::ostringstream msg;
+        msg << "-> \n";
+        if(actual.size() == 192) {
+          for(int y = 0; y < 8; ++y) {
+            for(int x=0; x < 8; ++x) {
+              msg << (uint16_t)actual[(y*8*3) + x*3];
+              msg << (uint16_t)actual[(y*8*3) + x*3 + 1];
+              msg << (uint16_t)actual[(y*8*3) + x*3 + 2];
+              msg << " ";
+            }
+            msg << "\n";
+          }
+        }
+        msg << " <-\n";
         msg << "bytes differ starting at index " << diff
             << " (expected size " << expected.size()
             << ", actual size " << actual.size() << ")\n";
