@@ -44,7 +44,7 @@ TEST_CASE("OpcodeVideoData#process_encoding_08 increments based on first 2 bytes
   REQUIRE_THAT(movie_player.new_frame->raw_data, BytesEqualWindow(expected));
   REQUIRE(opcode.stream_index == 16);
 }
-/*
+
 TEST_CASE("OpcodeVideoData#process_encoding_08 horizontally split block")
 {
   using namespace mve;
@@ -63,6 +63,7 @@ TEST_CASE("OpcodeVideoData#process_encoding_08 horizontally split block")
     00 00 00  00 00 00  00 00 00  00 00 00  11 11 11  66 66 66  66 66 66  66 66 66
     22 22 22  00 00 00  00 00 00  00 00 00  11 11 11  11 11 11  66 66 66  66 66 66
     22 22 22  22 22 22  00 00 00  00 00 00  11 11 11  11 11 11  66 66 66  66 66 66
+    22 22 22  22 22 22  22 22 22  00 00 00  11 11 11  11 11 11  11 11 11  66 66 66
   )");
 
   mve::MoviePlayer movie_player;
@@ -77,7 +78,7 @@ TEST_CASE("OpcodeVideoData#process_encoding_08 horizontally split block")
   opcode.process_encoding_08(0, 0, movie_player);
 
   REQUIRE_THAT(movie_player.new_frame->raw_data, BytesEqualWindow(expected));
-  REQUIRE(opcode.stream_index == 10);
+  REQUIRE(opcode.stream_index == 12);
 }
 
 TEST_CASE("OpcodeVideoData#process_encoding_08 vertically split block")
@@ -114,6 +115,5 @@ TEST_CASE("OpcodeVideoData#process_encoding_08 vertically split block")
   opcode.process_encoding_08(0, 0, movie_player);
 
   REQUIRE_THAT(movie_player.new_frame->raw_data, BytesEqualWindow(expected));
-  REQUIRE(opcode.stream_index == 10);
+  REQUIRE(opcode.stream_index == 12);
 }
-*/

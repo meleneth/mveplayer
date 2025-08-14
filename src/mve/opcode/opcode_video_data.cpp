@@ -190,6 +190,18 @@ void OpcodeVideoData::helper_08_1(int line_x, int line_y, uint8_t p0, uint8_t p1
     }
 }
 
+void OpcodeVideoData::helper_08_2(int line_x, int line_y, uint8_t p0, uint8_t p1, uint8_t bitmap, MoviePlayer &movie_player)
+{
+    auto &palette_entry_0 = movie_player.palette[p0];
+    auto &palette_entry_1 = movie_player.palette[p1];
+    int mask = 128;
+    for(int x = 0; x < 8; ++x) {
+      set_frame_pixel(movie_player, line_x + x, line_y, bitmap & mask, palette_entry_0, palette_entry_1);
+      mask >>= 1;
+    }
+}
+
+
 void OpcodeVideoData::process_encoding_08(int base_x, int base_y, MoviePlayer &movie_player)
 {
   int p0 = payload_[stream_index++];
@@ -240,24 +252,29 @@ void OpcodeVideoData::process_encoding_08(int base_x, int base_y, MoviePlayer &m
     int b6 = payload_[stream_index++];
     int b7 = payload_[stream_index++];
     if(p2 <=p3) {
-      
+      // left / right
+      helper_08_1(base_x, base_y,     p0, p1, b0, movie_player);
+      helper_08_1(base_x, base_y + 2, p0, p1, b1, movie_player);
+      helper_08_1(base_x, base_y + 4, p0, p1, b2, movie_player);
+      helper_08_1(base_x, base_y + 6, p0, p1, b3, movie_player);
+
+      helper_08_1(base_x + 4, base_y,     p2, p3, b4, movie_player);
+      helper_08_1(base_x + 4, base_y + 2, p2, p3, b5, movie_player);
+      helper_08_1(base_x + 4, base_y + 4, p2, p3, b6, movie_player);
+      helper_08_1(base_x + 4, base_y + 6, p2, p3, b7, movie_player);
     } else {
+      // top / bottom
+      helper_08_2(base_x, base_y,     p0, p1, b0, movie_player);
+      helper_08_2(base_x, base_y + 1, p0, p1, b1, movie_player);
+      helper_08_2(base_x, base_y + 2, p0, p1, b2, movie_player);
+      helper_08_2(base_x, base_y + 3, p0, p1, b3, movie_player);
 
+      helper_08_2(base_x, base_y + 4, p2, p3, b4, movie_player);
+      helper_08_2(base_x, base_y + 5, p2, p3, b5, movie_player);
+      helper_08_2(base_x, base_y + 6, p2, p3, b6, movie_player);
+      helper_08_2(base_x, base_y + 7, p2, p3, b7, movie_player);
     }
-    (void)b0;
-    (void)b1;
-    (void)b2;
-    (void)b3;
-    (void)b4;
-    (void)b5;
-    (void)b6;
-    (void)b7;
-    (void)p0;
-    (void)p1;
-    (void)p2;
-    (void)p3;
   }
-
 }
 
 void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_player)

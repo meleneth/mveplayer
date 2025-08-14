@@ -103,12 +103,13 @@ struct BytesEqualWindow : Catch::Matchers::MatcherBase<std::vector<uint8_t>> {
 
         std::ostringstream msg;
         msg << "-> \n";
+        msg << std::hex << std::setw(2) << std::setfill('0');
         if(actual.size() == 192) {
           for(int y = 0; y < 8; ++y) {
             for(int x=0; x < 8; ++x) {
-              msg << (uint16_t)actual[(y*8*3) + x*3];
-              msg << (uint16_t)actual[(y*8*3) + x*3 + 1];
-              msg << (uint16_t)actual[(y*8*3) + x*3 + 2];
+              msg << std::setw(2) << (uint16_t)actual[(y*8*3) + x*3];
+              msg << std::setw(2) << (uint16_t)actual[(y*8*3) + x*3 + 1];
+              msg << std::setw(2) << (uint16_t)actual[(y*8*3) + x*3 + 2];
               msg << " ";
             }
             msg << "\n";
