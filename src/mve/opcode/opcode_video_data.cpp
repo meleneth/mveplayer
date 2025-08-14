@@ -207,9 +207,6 @@ void OpcodeVideoData::process_encoding_08(int base_x, int base_y, MoviePlayer &m
   int p0 = payload_[stream_index++];
   int p1 = payload_[stream_index++];
 
-  //auto &palette_entry_0 = movie_player.palette[p0];
-  //auto &palette_entry_1 = movie_player.palette[p1];
-
   if(p0 <= p1) {
     int b0 = payload_[stream_index++];
     int b1 = payload_[stream_index++];
@@ -282,6 +279,43 @@ void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_playe
   (void)movie_player;
   (void)x;
   (void)y;
+  int p0 = payload_[stream_index++];
+  int p1 = payload_[stream_index++];
+  int p2 = payload_[stream_index++];
+  int p3 = payload_[stream_index++];
+  if(p0 <= p1) {
+    if (p2 <= p3) {
+      // 1x1
+      auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 16);
+      stream_index += 16;
+      int mask = 0xc0;
+      (void)mask;
+      (void)pattern;
+    } else {
+      // 2x2
+      auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
+      stream_index += 4;
+      int mask = 0xc0;
+      (void)mask;
+      (void)pattern;
+    }
+  } else {
+    if (p2 <= p3) {
+      // 2x1
+      auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 8);
+      stream_index += 8;
+      int mask = 0xc0;
+      (void)mask;
+      (void)pattern;
+    } else {
+      // 1x2
+      auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 8);
+      stream_index += 8;
+      int mask = 0xc0;
+      (void)mask;
+      (void)pattern;
+    }
+  }
 }
 
 void OpcodeVideoData::process_encoding_0a(int x, int y, MoviePlayer &movie_player)
@@ -289,6 +323,94 @@ void OpcodeVideoData::process_encoding_0a(int x, int y, MoviePlayer &movie_playe
   (void)movie_player;
   (void)x;
   (void)y;
+  int p0 = payload_[stream_index++];
+  int p1 = payload_[stream_index++];
+  int p2 = payload_[stream_index++];
+  int p3 = payload_[stream_index++];
+  if(p0 <= p1){
+    int b0 = payload_[stream_index++];
+    int b1 = payload_[stream_index++];
+    int b2 = payload_[stream_index++];
+    int b3 = payload_[stream_index++];
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    p2 = payload_[stream_index++];
+    p3 = payload_[stream_index++];
+
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+    b2 = payload_[stream_index++];
+    b3 = payload_[stream_index++];
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    p2 = payload_[stream_index++];
+    p3 = payload_[stream_index++];
+
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+    b2 = payload_[stream_index++];
+    b3 = payload_[stream_index++];
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    p2 = payload_[stream_index++];
+    p3 = payload_[stream_index++];
+
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+    b2 = payload_[stream_index++];
+    b3 = payload_[stream_index++];
+
+    (void)p0;
+    (void)p1;
+    (void)p2;
+    (void)p3;
+    (void)b0;
+    (void)b1;
+    (void)b2;
+    (void)b3;
+  } else {
+    int b0 = payload_[stream_index++];
+    int b1 = payload_[stream_index++];
+    int b2 = payload_[stream_index++];
+    int b3 = payload_[stream_index++];
+    int b4 = payload_[stream_index++];
+    int b5 = payload_[stream_index++];
+    int b6 = payload_[stream_index++];
+    int b7 = payload_[stream_index++];
+
+    p0 = payload_[stream_index++];
+    p1 = payload_[stream_index++];
+    p2 = payload_[stream_index++];
+    p3 = payload_[stream_index++];
+
+    b0 = payload_[stream_index++];
+    b1 = payload_[stream_index++];
+    b2 = payload_[stream_index++];
+    b3 = payload_[stream_index++];
+    b4 = payload_[stream_index++];
+    b5 = payload_[stream_index++];
+    b6 = payload_[stream_index++];
+    b7 = payload_[stream_index++];
+    (void)p0;
+    (void)p1;
+    (void)p2;
+    (void)p3;
+    (void)b0;
+    (void)b1;
+    (void)b2;
+    (void)b3;
+    (void)b4;
+    (void)b5;
+    (void)b6;
+    (void)b7;
+  }
+  (void)p0;
+  (void)p1;
+  (void)p2;
+  (void)p3;
 }
 
 void OpcodeVideoData::process_encoding_0b(int block_x, int block_y, MoviePlayer &movie_player)
