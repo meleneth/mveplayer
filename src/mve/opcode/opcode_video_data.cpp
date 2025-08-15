@@ -274,23 +274,43 @@ void OpcodeVideoData::process_encoding_08(int base_x, int base_y, MoviePlayer &m
   }
 }
 
-void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_player)
+void OpcodeVideoData::pixel_poke(int x, int y, int palette_index, MoviePlayer &movie_player)
 {
-  (void)movie_player;
-  (void)x;
-  (void)y;
-  int p0 = payload_[stream_index++];
-  int p1 = payload_[stream_index++];
-  int p2 = payload_[stream_index++];
-  int p3 = payload_[stream_index++];
-  if(p0 <= p1) {
-    if (p2 <= p3) {
+    int frame_pixel = ( x * 3) + ( y * movie_player.pitch);
+    auto& new_frame_data = movie_player.new_frame->raw_data;
+    auto &palette = movie_player.palette[palette_index];
+
+    new_frame_data[frame_pixel    ] = palette.r;
+    new_frame_data[frame_pixel + 1] = palette.g;
+    new_frame_data[frame_pixel + 2] = palette.b;
+}
+
+void OpcodeVideoData::process_encoding_09(int base_x, int base_y, MoviePlayer &movie_player)
+{
+  auto p = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
+  stream_index += 4;
+  if(p[0] <= p[1]) {
+    if (p[2] <= p[3]) {
       // 1x1
       auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 16);
       stream_index += 16;
-      int mask = 0xc0;
-      (void)mask;
-      (void)pattern;
+      int pattern_index = 0;
+      for(int y=0; y < 8; ++y) {
+        for(int x=0; x < 2; ++x){
+          uint8_t b = pattern[pattern_index++];
+          int palette_index = (b & 0xc0) >> 6;
+          pixel_poke(base_x + (x * 4), base_y + y, p[palette_index], movie_player);
+
+          palette_index = (b & 0x30) >> 4;
+          pixel_poke(base_x + (x * 4) + 1, base_y + y, p[palette_index], movie_player);
+
+          palette_index = (b & 0x0c) >> 2;
+          pixel_poke(base_x + (x * 4) + 2, base_y + y, p[palette_index], movie_player);
+
+          palette_index = (b & 0x03);
+          pixel_poke(base_x + (x * 4) + 3, base_y + y, p[palette_index], movie_player);
+        }
+      }
     } else {
       // 2x2
       auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
@@ -300,7 +320,7 @@ void OpcodeVideoData::process_encoding_09(int x, int y, MoviePlayer &movie_playe
       (void)pattern;
     }
   } else {
-    if (p2 <= p3) {
+    if (p[2] <= p[3]) {
       // 2x1
       auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 8);
       stream_index += 8;

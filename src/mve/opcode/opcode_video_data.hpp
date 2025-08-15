@@ -24,6 +24,7 @@ public:
     void helper_08_1(int line_x, int line_y, uint8_t p0, uint8_t p1, uint8_t bitmap, MoviePlayer &movie_player);
     void helper_08_2(int line_x, int line_y, uint8_t p0, uint8_t p1, uint8_t bitmap, MoviePlayer &movie_player);
     void process_encoding_08(int x, int y, MoviePlayer &movie_player);
+    void pixel_poke(int x, int y, int palette_index, MoviePlayer &movie_player);
     void process_encoding_09(int x, int y, MoviePlayer &movie_player);
     void process_encoding_0a(int x, int y, MoviePlayer &movie_player);
     void process_encoding_0b(int x, int y, MoviePlayer &movie_player);
