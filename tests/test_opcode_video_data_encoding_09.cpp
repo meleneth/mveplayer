@@ -58,15 +58,16 @@ TEST_CASE("OpcodeVideoData#process_encoding_09 1x1 2 bit patterns ")
   REQUIRE_THAT(movie_player.new_frame->raw_data, BytesEqualWindow(expected));
   REQUIRE(opcode.stream_index == 20);
 }
-/*
+
 TEST_CASE("OpcodeVideoData#process_encoding_09 2x2 2 bit patterns ")
 {
   using namespace mve;
-  // If P0 <= P1 AND P2 > P3, we get 4 bytes of pattern, each 2 bits representing a 2x2 pixel. 
+  // If P0 <= P1 AND P2 > P3, we get 4 bytes of pattern,
+  // each 2 bits representing a 2x2 pixel. 
   // Ordering is left to right and top to bottom.
 
   auto d = vhex(R"(
-    00 11 33 22  1B E4 1B E4  D2 87 D2 87
+    00 11 33 22  1B E4 1B E4
   )");
   std::span<const uint8_t> payload(d);
 
@@ -74,6 +75,15 @@ TEST_CASE("OpcodeVideoData#process_encoding_09 2x2 2 bit patterns ")
   mve::OpcodeVideoData opcode(0x11, 0, payload);
 
   auto expected = vhex(R"(
+    00 00 00  00 00 00  11 11 11  11 11 11   33 33 33  33 33 33  22 22 22  22 22 22
+    00 00 00  00 00 00  11 11 11  11 11 11   33 33 33  33 33 33  22 22 22  22 22 22
+    22 22 22  22 22 22  33 33 33  33 33 33   11 11 11  11 11 11  00 00 00  00 00 00
+    22 22 22  22 22 22  33 33 33  33 33 33   11 11 11  11 11 11  00 00 00  00 00 00
+
+    00 00 00  00 00 00  11 11 11  11 11 11   33 33 33  33 33 33  22 22 22  22 22 22
+    00 00 00  00 00 00  11 11 11  11 11 11   33 33 33  33 33 33  22 22 22  22 22 22
+    22 22 22  22 22 22  33 33 33  33 33 33   11 11 11  11 11 11  00 00 00  00 00 00
+    22 22 22  22 22 22  33 33 33  33 33 33   11 11 11  11 11 11  00 00 00  00 00 00
   )");
 
   
@@ -86,8 +96,10 @@ TEST_CASE("OpcodeVideoData#process_encoding_09 2x2 2 bit patterns ")
   opcode.process_encoding_09(0, 0, movie_player);
 
   REQUIRE_THAT(movie_player.new_frame->raw_data, BytesEqualWindow(expected));
-  REQUIRE(opcode.stream_index == 0);
+  REQUIRE(opcode.stream_index == 8);
 }
+
+/*
 
 TEST_CASE("OpcodeVideoData#process_encoding_09 2x1 2 bit patterns ")
 {

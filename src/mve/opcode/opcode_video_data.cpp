@@ -285,6 +285,26 @@ void OpcodeVideoData::pixel_poke(int x, int y, int palette_index, MoviePlayer &m
     new_frame_data[frame_pixel + 2] = palette.b;
 }
 
+void OpcodeVideoData::pixel_poke_2x2(int x, int y, int palette_index, MoviePlayer &movie_player)
+{
+  pixel_poke(x,     y,     palette_index, movie_player);
+  pixel_poke(x + 1, y,     palette_index, movie_player);
+  pixel_poke(x,     y + 1, palette_index, movie_player);
+  pixel_poke(x + 1, y + 1, palette_index, movie_player);
+}
+
+void OpcodeVideoData::pixel_poke_2x1(int x, int y, int palette_index, MoviePlayer &movie_player)
+{
+  pixel_poke(x,     y,     palette_index, movie_player);
+  pixel_poke(x + 1, y,     palette_index, movie_player);
+}
+
+void OpcodeVideoData::pixel_poke_1x2(int x, int y, int palette_index, MoviePlayer &movie_player)
+{
+  pixel_poke(x,     y,     palette_index, movie_player);
+  pixel_poke(x,     y + 1, palette_index, movie_player);
+}
+
 void OpcodeVideoData::process_encoding_09(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto p = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
@@ -315,9 +335,46 @@ void OpcodeVideoData::process_encoding_09(int base_x, int base_y, MoviePlayer &m
       // 2x2
       auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
       stream_index += 4;
-      int mask = 0xc0;
-      (void)mask;
-      (void)pattern;
+      int pattern_index = 0;
+      uint8_t b = pattern[pattern_index++];
+      int palette_index = (b & 0xc0) >> 6;
+      pixel_poke_2x2(base_x,     base_y,     p[palette_index], movie_player);
+      palette_index = (b & 0x30) >> 4;
+      pixel_poke_2x2(base_x + 2, base_y,     p[palette_index], movie_player);
+      palette_index = (b & 0x0c) >> 2;
+      pixel_poke_2x2(base_x + 4, base_y,     p[palette_index], movie_player);
+      palette_index = (b & 0x03);
+      pixel_poke_2x2(base_x + 6, base_y,     p[palette_index], movie_player);
+
+      b = pattern[pattern_index++];
+      palette_index = (b & 0xc0) >> 6;
+      pixel_poke_2x2(base_x,     base_y + 2,     p[palette_index], movie_player);
+      palette_index = (b & 0x30) >> 4;
+      pixel_poke_2x2(base_x + 2, base_y + 2,     p[palette_index], movie_player);
+      palette_index = (b & 0x0c) >> 2;
+      pixel_poke_2x2(base_x + 4, base_y + 2,     p[palette_index], movie_player);
+      palette_index = (b & 0x03);
+      pixel_poke_2x2(base_x + 6, base_y + 2,     p[palette_index], movie_player);
+
+      b = pattern[pattern_index++];
+      palette_index = (b & 0xc0) >> 6;
+      pixel_poke_2x2(base_x,     base_y + 4,     p[palette_index], movie_player);
+      palette_index = (b & 0x30) >> 4;
+      pixel_poke_2x2(base_x + 2, base_y + 4,     p[palette_index], movie_player);
+      palette_index = (b & 0x0c) >> 2;
+      pixel_poke_2x2(base_x + 4, base_y + 4,     p[palette_index], movie_player);
+      palette_index = (b & 0x03);
+      pixel_poke_2x2(base_x + 6, base_y + 4,     p[palette_index], movie_player);
+
+      b = pattern[pattern_index++];
+      palette_index = (b & 0xc0) >> 6;
+      pixel_poke_2x2(base_x,     base_y + 6,     p[palette_index], movie_player);
+      palette_index = (b & 0x30) >> 4;
+      pixel_poke_2x2(base_x + 2, base_y + 6,     p[palette_index], movie_player);
+      palette_index = (b & 0x0c) >> 2;
+      pixel_poke_2x2(base_x + 4, base_y + 6,     p[palette_index], movie_player);
+      palette_index = (b & 0x03);
+      pixel_poke_2x2(base_x + 6, base_y + 6,     p[palette_index], movie_player);
     }
   } else {
     if (p[2] <= p[3]) {
