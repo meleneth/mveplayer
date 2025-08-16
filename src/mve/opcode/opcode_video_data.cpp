@@ -336,45 +336,17 @@ void OpcodeVideoData::process_encoding_09(int base_x, int base_y, MoviePlayer &m
       auto pattern = std::span<const uint8_t>(payload_).subspan(stream_index, 4);
       stream_index += 4;
       int pattern_index = 0;
-      uint8_t b = pattern[pattern_index++];
-      int palette_index = (b & 0xc0) >> 6;
-      pixel_poke_2x2(base_x,     base_y,     p[palette_index], movie_player);
-      palette_index = (b & 0x30) >> 4;
-      pixel_poke_2x2(base_x + 2, base_y,     p[palette_index], movie_player);
-      palette_index = (b & 0x0c) >> 2;
-      pixel_poke_2x2(base_x + 4, base_y,     p[palette_index], movie_player);
-      palette_index = (b & 0x03);
-      pixel_poke_2x2(base_x + 6, base_y,     p[palette_index], movie_player);
-
-      b = pattern[pattern_index++];
-      palette_index = (b & 0xc0) >> 6;
-      pixel_poke_2x2(base_x,     base_y + 2,     p[palette_index], movie_player);
-      palette_index = (b & 0x30) >> 4;
-      pixel_poke_2x2(base_x + 2, base_y + 2,     p[palette_index], movie_player);
-      palette_index = (b & 0x0c) >> 2;
-      pixel_poke_2x2(base_x + 4, base_y + 2,     p[palette_index], movie_player);
-      palette_index = (b & 0x03);
-      pixel_poke_2x2(base_x + 6, base_y + 2,     p[palette_index], movie_player);
-
-      b = pattern[pattern_index++];
-      palette_index = (b & 0xc0) >> 6;
-      pixel_poke_2x2(base_x,     base_y + 4,     p[palette_index], movie_player);
-      palette_index = (b & 0x30) >> 4;
-      pixel_poke_2x2(base_x + 2, base_y + 4,     p[palette_index], movie_player);
-      palette_index = (b & 0x0c) >> 2;
-      pixel_poke_2x2(base_x + 4, base_y + 4,     p[palette_index], movie_player);
-      palette_index = (b & 0x03);
-      pixel_poke_2x2(base_x + 6, base_y + 4,     p[palette_index], movie_player);
-
-      b = pattern[pattern_index++];
-      palette_index = (b & 0xc0) >> 6;
-      pixel_poke_2x2(base_x,     base_y + 6,     p[palette_index], movie_player);
-      palette_index = (b & 0x30) >> 4;
-      pixel_poke_2x2(base_x + 2, base_y + 6,     p[palette_index], movie_player);
-      palette_index = (b & 0x0c) >> 2;
-      pixel_poke_2x2(base_x + 4, base_y + 6,     p[palette_index], movie_player);
-      palette_index = (b & 0x03);
-      pixel_poke_2x2(base_x + 6, base_y + 6,     p[palette_index], movie_player);
+      for(int y = 0; y < 4; ++y) {
+        uint8_t b = pattern[pattern_index++];
+        int palette_index = (b & 0xc0) >> 6;
+        pixel_poke_2x2(base_x,     base_y + (y * 2),     p[palette_index], movie_player);
+        palette_index = (b & 0x30) >> 4;
+        pixel_poke_2x2(base_x + 2, base_y + (y * 2),     p[palette_index], movie_player);
+        palette_index = (b & 0x0c) >> 2;
+        pixel_poke_2x2(base_x + 4, base_y + (y * 2), p[palette_index], movie_player);
+        palette_index = (b & 0x03);
+        pixel_poke_2x2(base_x + 6, base_y + (y * 2), p[palette_index], movie_player);
+      }
     }
   } else {
     if (p[2] <= p[3]) {
