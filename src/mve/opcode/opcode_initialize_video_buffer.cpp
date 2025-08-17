@@ -25,9 +25,9 @@ std::string OpcodeInitializeVideoBuffer::name() const {
     return "OpcodeInitializeVideoBuffer";
 }
 
-void OpcodeInitializeVideoBuffer::process(MoviePlayer &movie_player) const {
+void OpcodeInitializeVideoBuffer::process(MoviePlayer &movie_player) {
   spdlog::info("    InitializeVideoBuffer(x={}, y={}, flags={})", x_resolution, y_resolution, flags);
-  (void)movie_player;
+  movie_player.allocate_video_buffer(x_resolution, y_resolution);
 }
 
 

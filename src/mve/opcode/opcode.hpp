@@ -22,7 +22,7 @@ public:
 
     virtual std::string name() const { return "GenericOpcode"; }
 
-    virtual void process(MoviePlayer & movie_player) const { }
+    virtual void process(MoviePlayer & movie_player) { }
 
     const std::span<const uint8_t> data() const { return payload_; }
 

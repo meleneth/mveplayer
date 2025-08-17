@@ -32,11 +32,11 @@ std::string OpcodeSetPalette::name() const
   return "OpcodeSetPalette";
 }
 
-void OpcodeSetPalette::process(MoviePlayer &movie_player) const
+void OpcodeSetPalette::process(MoviePlayer &movie_player)
 {
   spdlog::info("    OpcodeSetPalette(pal_start={}, pal_count={}, data.size={}) | {}", pal_start, pal_count, data().size(), hex_dump(data()));
   const std::size_t count = payload_.size() / 3;
-  movie_player.ensure_palette_size(pal_start + pal_count);
+  movie_player.ensure_palette_size(pal_start + pal_count + 1); // don't ask why +1
 
   for (std::size_t i = 0; i < count; ++i) {
     std::size_t offset = i * 3;

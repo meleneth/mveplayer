@@ -8,7 +8,7 @@ public:
     using Opcode::Opcode;
 
     std::string name() const override;
-    void process(MoviePlayer &movie_player) const override;
+    void process(MoviePlayer &movie_player) override;
     void count_encodings() const;
 };
 

@@ -12,7 +12,8 @@ public:
 
     void set_frame_pixel(MoviePlayer &movie_player, int pixel_x, int pixel_y, bool which_palette, MPRGB8 &palette_0, MPRGB8 &palette_1);
 
-    void process(MoviePlayer &movie_player) const override;
+    void process(MoviePlayer &movie_player) override;
+    void process_encoding(int x, int y, int encoding, MoviePlayer &movie_player);
     void process_encoding_00(int x, int y, MoviePlayer &movie_player);
     void process_encoding_01(int x, int y, MoviePlayer &movie_player);
     void process_encoding_02(int x, int y, MoviePlayer &movie_player);

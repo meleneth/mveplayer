@@ -9,7 +9,7 @@ std::string OpcodeEndOfChunk::name() const
     return "OpcodeEndOfChunk";
 }
 
-void OpcodeEndOfChunk::process(MoviePlayer &movie_player) const
+void OpcodeEndOfChunk::process(MoviePlayer &movie_player)
 {
   spdlog::info("    OpcodeEndOfChunk()");
   movie_player.set_decoding_map(nullptr);

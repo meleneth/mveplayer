@@ -17,7 +17,6 @@ target_link_libraries(mve_tests
 target_include_directories(mve_tests
     PRIVATE
         ${CMAKE_SOURCE_DIR}/src
-        sdplog::spdlog
 )
 
 

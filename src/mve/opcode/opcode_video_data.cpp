@@ -1,5 +1,7 @@
 #include <algorithm>
+#include<log/log.hpp>
 #include<mve/opcode/opcode_video_data.hpp>
+#include<mve/opcode/opcode_set_decoding_map.hpp>
 #include<mve/opcode/movie_player.hpp>
 
 namespace mve {
@@ -14,9 +16,79 @@ std::string OpcodeVideoData::name() const
     return "OpcodeVideoData";
 }
 
-void OpcodeVideoData::process(MoviePlayer &movie_player) const
+void OpcodeVideoData::process(MoviePlayer &movie_player)
 {
-  (void)movie_player;
+  int x = 0;
+  int y = 0;
+  for (uint8_t byte : movie_player.decoding_map->data()) {
+    uint8_t low  = byte & 0x0F;
+    uint8_t high = (byte >> 4) & 0x0F;
+    process_encoding(x, y, high, movie_player);
+    process_encoding(x, y, low,  movie_player);
+    x += 8;
+    if(x >= 640) {
+      x = 0;
+      y += 8;
+    }
+    if(y == 80)
+	    return;
+  }
+}
+
+void OpcodeVideoData::process_encoding(int x, int y, int encoding, MoviePlayer &movie_player)
+{
+  spdlog::debug("({}, {}) enc {:02x} at SI {}", x, y, encoding, stream_index);
+
+  switch(encoding){
+  case 0:
+    process_encoding_00(x, y, movie_player);
+    break;
+  case 1:
+    process_encoding_01(x, y, movie_player);
+    break;
+  case 2:
+    process_encoding_02(x, y, movie_player);
+    break;
+  case 3:
+    process_encoding_03(x, y, movie_player);
+    break;
+  case 4:
+    process_encoding_04(x, y, movie_player);
+    break;
+  case 5:
+    process_encoding_05(x, y, movie_player);
+    break;
+  case 6:
+    process_encoding_06(x, y, movie_player);
+    break;
+  case 7:
+    process_encoding_07(x, y, movie_player);
+    break;
+  case 8:
+    process_encoding_08(x, y, movie_player);
+    break;
+  case 9:
+    process_encoding_09(x, y, movie_player);
+    break;
+  case 0xa:
+    process_encoding_0a(x, y, movie_player);
+    break;
+  case 0xb:
+    process_encoding_0b(x, y, movie_player);
+    break;
+  case 0xc:
+    process_encoding_0c(x, y, movie_player);
+    break;
+  case 0xd:
+    process_encoding_0d(x, y, movie_player);
+    break;
+  case 0xe:
+    process_encoding_0e(x, y, movie_player);
+    break;
+  case 0xf:
+    process_encoding_0f(x, y, movie_player);
+    break;
+  }
 }
 
 void OpcodeVideoData::process_encoding_00(int x, int y, MoviePlayer &movie_player)
@@ -75,7 +147,7 @@ void OpcodeVideoData::process_encoding_06(int x, int y, MoviePlayer &movie_playe
   (void)y;
 }
 
-void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_07(int base_x, int base_y, MoviePlayer &movie_player)
 {
   int p0 = payload_[stream_index++];
   int p1 = payload_[stream_index++];
@@ -84,9 +156,6 @@ void OpcodeVideoData::process_encoding_07(int block_x, int block_y, MoviePlayer 
   auto &palette_entry_1 = movie_player.palette[p1];
 
   auto& new_frame_data = movie_player.new_frame->raw_data;
-
-  int base_x = block_x * 8;
-  int base_y = block_y * 8;
 
   if (p0 <= p1) {
     for(int y = 0; y < 8 ; ++y) {
@@ -462,11 +531,9 @@ void OpcodeVideoData::process_encoding_0a(int x, int y, MoviePlayer &movie_playe
   (void)p3;
 }
 
-void OpcodeVideoData::process_encoding_0b(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_0b(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
-  int base_x = block_x * 8;
-  int base_y = block_y * 8;
 
   for(int y = 0; y < 8; ++y) {
     for(int x=0; x<8; ++x) {
@@ -480,11 +547,9 @@ void OpcodeVideoData::process_encoding_0b(int block_x, int block_y, MoviePlayer 
   }
 }
 
-void OpcodeVideoData::process_encoding_0c(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_0c(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
-  int base_x = block_x * 8;
-  int base_y = block_y * 8;
 
   for(int y = 0; y < 4; ++y) {
     for(int x=0; x < 4; ++x) {
@@ -510,11 +575,9 @@ void OpcodeVideoData::process_encoding_0c(int block_x, int block_y, MoviePlayer 
   }
 }
 
-void OpcodeVideoData::process_encoding_0d(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_0d(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
-  int base_x = block_x * 8;
-  int base_y = block_y * 8;
 
   for(int y = 0; y < 2; ++y) {
     for(int x=0; x < 2; ++x) {

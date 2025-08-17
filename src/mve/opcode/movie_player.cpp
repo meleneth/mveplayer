@@ -9,11 +9,33 @@ namespace mve {
 MoviePlayer::MoviePlayer()
 {
   decoding_map = nullptr;
+  window = nullptr;
+  renderer=nullptr;
+  texture=nullptr;
+}
+
+MoviePlayer::~MoviePlayer()
+{
+  if(window) {
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+  }
 }
 
 void MoviePlayer::swap_buffers() noexcept
 {
   std::swap(current_frame, new_frame);
+}
+
+void MoviePlayer::render_current_to_screen()
+{
+  SDL_Rect rect = {0, 0, 640, 320};
+
+  SDL_UpdateTexture(texture, &rect, current_frame->raw_data.data(), pitch);
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+  SDL_RenderPresent(renderer);
 }
 
 void MoviePlayer::set_decoding_map(const OpcodeSetDecodingMap *decoding_map)
@@ -53,6 +75,28 @@ void MoviePlayer::allocate_video_buffer(std::size_t x_blocks, std::size_t y_bloc
   pitch = y_blocks * 8 * 3;
   current_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
   new_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
+}
+
+void MoviePlayer::open_window(int width, int height) {
+  window = SDL_CreateWindow(
+    "SDL2 Render Vector<uint8_t>",
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+    width, height,
+    SDL_WINDOW_SHOWN
+  );
+
+  renderer = SDL_CreateRenderer(
+    window, -1,
+    SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+  );
+  
+  texture = SDL_CreateTexture(
+    renderer,
+    SDL_PIXELFORMAT_RGB24,
+    SDL_TEXTUREACCESS_STREAMING,
+    640, 320
+  );
+
 }
 
 }

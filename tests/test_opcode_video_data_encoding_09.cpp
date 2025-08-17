@@ -99,8 +99,6 @@ TEST_CASE("OpcodeVideoData#process_encoding_09 2x2 2 bit patterns ")
   REQUIRE(opcode.stream_index == 8);
 }
 
-/*
-
 TEST_CASE("OpcodeVideoData#process_encoding_09 2x1 2 bit patterns ")
 {
   using namespace mve;
@@ -132,6 +130,7 @@ TEST_CASE("OpcodeVideoData#process_encoding_09 2x1 2 bit patterns ")
   REQUIRE(opcode.stream_index == 0);
 }
 
+/*
 TEST_CASE("OpcodeVideoData#process_encoding_09 1x2 2 bit patterns ")
 {
   using namespace mve;

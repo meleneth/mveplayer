@@ -1,3 +1,5 @@
+#include<SDL.h>
+
 #include<log/log.hpp>
 #include<mve/hex_dump.hpp>
 #include<mve/opcode/opcode.hpp>
@@ -24,9 +26,10 @@ std::string OpcodeInitializeVideoMode::name() const {
     return "OpcodeInitializeVideoMode";
 }
 
-void OpcodeInitializeVideoMode::process(MoviePlayer &movie_player) const {
+void OpcodeInitializeVideoMode::process(MoviePlayer &movie_player) {
   spdlog::info("    InitializeVideoMode(x={}, y={}, flags={})", x_resolution, y_resolution, flags);
-  (void)movie_player;
+
+  movie_player.open_window(x_resolution, y_resolution);
 }
 
 
