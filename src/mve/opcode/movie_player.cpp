@@ -72,7 +72,7 @@ void MoviePlayer::set_palette_from_6bit(std::size_t index, uint8_t r6, uint8_t g
 void MoviePlayer::allocate_video_buffer(std::size_t x_blocks, std::size_t y_blocks)
 {
   std::size_t total_pixels = x_blocks * y_blocks;
-  pitch = y_blocks * 8 * 3;
+  pitch = x_blocks * 8 * 3;
   current_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
   new_frame = std::make_unique<Buffer>(total_pixels * 64 * 3);
 }

@@ -18,26 +18,47 @@ std::string OpcodeVideoData::name() const
 
 void OpcodeVideoData::process(MoviePlayer &movie_player)
 {
-  int x = 0;
-  int y = 0;
+  int nibble_count = 0;
+  spdlog::info("Processing nibbles {} * 2 pitch is {}", movie_player.decoding_map->data().size(), movie_player.pitch);
+  for(int y = 0; y < 40 ; ++y){
+    for(int x = 0; x < 80 ; x+=2){
+      uint8_t byte = movie_player.decoding_map->data()[y * 40 +( x / 2)]; 
+      uint8_t low  = byte & 0x0F;
+      uint8_t high = (byte >> 4) & 0x0F;
+      if(stream_index > (payload_.size() - 100)) {
+        spdlog::error("early bail({}) from VideoData#process: {} index, {} size (x={}, y={})", nibble_count, stream_index, payload_.size(), x, y);
+        return;
+      }
+      process_encoding(x * 8,     y * 8, low,  movie_player);
+      process_encoding(x * 8 + 8, y * 8, high, movie_player);
+    }
+  }
+  /*
   for (uint8_t byte : movie_player.decoding_map->data()) {
     uint8_t low  = byte & 0x0F;
     uint8_t high = (byte >> 4) & 0x0F;
-    process_encoding(x, y, high, movie_player);
     process_encoding(x, y, low,  movie_player);
     x += 8;
+    process_encoding(x, y, high, movie_player);
+    x += 8;
+    nibble_count++;
+    if(stream_index > (payload_.size() - 100)) {
+      spdlog::error("early bail({}) from VideoData#process: {} index, {} size (x={}, y={})", nibble_count, stream_index, payload_.size(), x, y);
+      return;
+    }
     if(x >= 640) {
       x = 0;
       y += 8;
     }
-    if(y == 80)
+    if(y >= 320)
 	    return;
   }
+  */
 }
 
 void OpcodeVideoData::process_encoding(int x, int y, int encoding, MoviePlayer &movie_player)
 {
-  spdlog::debug("({}, {}) enc {:02x} at SI {}", x, y, encoding, stream_index);
+  spdlog::debug("({}, {}) enc {:02x} at SI {}/{}", x, y, encoding, stream_index, payload_.size());
 
   switch(encoding){
   case 0:
@@ -538,11 +559,10 @@ void OpcodeVideoData::process_encoding_0b(int base_x, int base_y, MoviePlayer &m
   for(int y = 0; y < 8; ++y) {
     for(int x=0; x<8; ++x) {
       int frame_pixel = ((base_x + x) * 3) + ((base_y + y) * movie_player.pitch);
-      auto &palette_entry = movie_player.palette[payload_[stream_index]];
+      auto &palette_entry = movie_player.palette[payload_[stream_index++]];
       new_frame_data[frame_pixel    ] = palette_entry.r;
       new_frame_data[frame_pixel + 1] = palette_entry.g;
       new_frame_data[frame_pixel + 2] = palette_entry.b;
-      stream_index++;
     }
   }
 }
@@ -554,7 +574,7 @@ void OpcodeVideoData::process_encoding_0c(int base_x, int base_y, MoviePlayer &m
   for(int y = 0; y < 4; ++y) {
     for(int x=0; x < 4; ++x) {
       int frame_pixel = ((base_x + (x * 2)) * 3) + ((base_y + (y * 2)) * movie_player.pitch);
-      auto &palette_entry = movie_player.palette[payload_[stream_index]];
+      auto &palette_entry = movie_player.palette[payload_[stream_index++]];
       new_frame_data[frame_pixel    ] = palette_entry.r;
       new_frame_data[frame_pixel + 1] = palette_entry.g;
       new_frame_data[frame_pixel + 2] = palette_entry.b;
@@ -570,7 +590,6 @@ void OpcodeVideoData::process_encoding_0c(int base_x, int base_y, MoviePlayer &m
       new_frame_data[frame_pixel + movie_player.pitch + 3] = palette_entry.r;
       new_frame_data[frame_pixel + movie_player.pitch + 4] = palette_entry.g;
       new_frame_data[frame_pixel + movie_player.pitch + 5] = palette_entry.b;
-      stream_index++;
     }
   }
 }
@@ -582,7 +601,7 @@ void OpcodeVideoData::process_encoding_0d(int base_x, int base_y, MoviePlayer &m
   for(int y = 0; y < 2; ++y) {
     for(int x=0; x < 2; ++x) {
       int frame_pixel = ((base_x + (x * 4)) * 3) + ((base_y + (y * 4)) * movie_player.pitch);
-      auto &palette_entry = movie_player.palette[payload_[stream_index]];
+      auto &palette_entry = movie_player.palette[payload_[stream_index++]];
       new_frame_data[frame_pixel    ] = palette_entry.r;
       new_frame_data[frame_pixel + 1] = palette_entry.g;
       new_frame_data[frame_pixel + 2] = palette_entry.b;
@@ -646,22 +665,18 @@ void OpcodeVideoData::process_encoding_0d(int base_x, int base_y, MoviePlayer &m
       new_frame_data[frame_pixel + movie_player.pitch + movie_player.pitch + movie_player.pitch + 9] = palette_entry.r;
       new_frame_data[frame_pixel + movie_player.pitch + movie_player.pitch + movie_player.pitch + 10] = palette_entry.g;
       new_frame_data[frame_pixel + movie_player.pitch + movie_player.pitch + movie_player.pitch + 11] = palette_entry.b;
-      stream_index++;
     }
   }
 }
 
-void OpcodeVideoData::process_encoding_0e(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_0e(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
-  int base_y = block_y * 8;
-  (void)block_x;
 
-  auto &palette_entry = movie_player.palette[payload_[stream_index]];
-  stream_index++;
+  auto &palette_entry = movie_player.palette[payload_[stream_index++]];
 
   for(int y = 0; y < 8; ++y) {
-    int frame_pixel =  (base_y + y) * movie_player.pitch;
+    int frame_pixel =  (base_y + y) * movie_player.pitch + (base_x * 3);
 
     new_frame_data[frame_pixel    ] = palette_entry.r;
     new_frame_data[frame_pixel + 1] = palette_entry.g;
@@ -697,11 +712,9 @@ void OpcodeVideoData::process_encoding_0e(int block_x, int block_y, MoviePlayer 
   }
 }
 
-void OpcodeVideoData::process_encoding_0f(int block_x, int block_y, MoviePlayer &movie_player)
+void OpcodeVideoData::process_encoding_0f(int base_x, int base_y, MoviePlayer &movie_player)
 {
   auto& new_frame_data = movie_player.new_frame->raw_data;
-  int base_y = block_y * 8;
-  int base_x = block_x * 8;
 
   auto &palette_entry1 = movie_player.palette[payload_[stream_index++]];
   auto &palette_entry2 = movie_player.palette[payload_[stream_index++]];
