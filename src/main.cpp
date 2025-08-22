@@ -36,10 +36,11 @@ void do_thing(std::string filename)
         int opcode_index = 0;
         for(const auto& opcode : chunk->opcodes()) {
           spdlog::info("  Opcode #{} - {}: length={} type={} version={}", opcode_index++, opcode->name(), opcode->data().size(), opcode->type(), opcode->version());
+	  movie_player.chunk_no = chunk_index;
           opcode->process(movie_player);
         }
     }
-
+    movie_player.scanner_b.report();
 }
 
 int main(int argc, char* argv[]) {

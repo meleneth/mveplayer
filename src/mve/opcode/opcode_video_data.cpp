@@ -25,11 +25,13 @@ void OpcodeVideoData::process(MoviePlayer &movie_player)
       uint8_t byte = movie_player.decoding_map->data()[y * 40 +( x / 2)]; 
       uint8_t low  = byte & 0x0F;
       uint8_t high = (byte >> 4) & 0x0F;
-      if(stream_index > (payload_.size() - 100)) {
+      if(stream_index > (payload_.size() - 200)) {
         spdlog::error("early bail({}) from VideoData#process: {} index, {} size (x={}, y={})", nibble_count, stream_index, payload_.size(), x, y);
         return;
       }
+      movie_player.scanner_b.saw_opcode(x, y, movie_player.chunk_no, stream_index, low);
       process_encoding(x * 8,     y * 8, low,  movie_player);
+      movie_player.scanner_b.saw_opcode(x, y, movie_player.chunk_no, stream_index, high);
       process_encoding(x * 8 + 8, y * 8, high, movie_player);
     }
   }

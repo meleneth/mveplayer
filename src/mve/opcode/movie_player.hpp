@@ -7,6 +7,7 @@
 #include <memory>
 
 #include <mve/opcode/buffer.hpp>
+#include <mve/opcode/scanner_b.hpp>
 
 namespace mve {
 
@@ -54,6 +55,8 @@ public:
   uint16_t x_blocks;
   uint16_t y_blocks;
   uint16_t pitch;
+  int chunk_no;
+  ScannerB scanner_b;
 private:
   SDL_Window* window;
   SDL_Renderer* renderer;
