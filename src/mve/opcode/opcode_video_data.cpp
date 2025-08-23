@@ -31,31 +31,10 @@ void OpcodeVideoData::process(MoviePlayer &movie_player)
       }
       movie_player.scanner_b.saw_opcode(x, y, movie_player.chunk_no, stream_index, low);
       process_encoding(x * 8,     y * 8, low,  movie_player);
-      movie_player.scanner_b.saw_opcode(x, y, movie_player.chunk_no, stream_index, high);
+      movie_player.scanner_b.saw_opcode(x + 1, y, movie_player.chunk_no, stream_index, high);
       process_encoding(x * 8 + 8, y * 8, high, movie_player);
     }
   }
-  /*
-  for (uint8_t byte : movie_player.decoding_map->data()) {
-    uint8_t low  = byte & 0x0F;
-    uint8_t high = (byte >> 4) & 0x0F;
-    process_encoding(x, y, low,  movie_player);
-    x += 8;
-    process_encoding(x, y, high, movie_player);
-    x += 8;
-    nibble_count++;
-    if(stream_index > (payload_.size() - 100)) {
-      spdlog::error("early bail({}) from VideoData#process: {} index, {} size (x={}, y={})", nibble_count, stream_index, payload_.size(), x, y);
-      return;
-    }
-    if(x >= 640) {
-      x = 0;
-      y += 8;
-    }
-    if(y >= 320)
-	    return;
-  }
-  */
 }
 
 void OpcodeVideoData::process_encoding(int x, int y, int encoding, MoviePlayer &movie_player)
