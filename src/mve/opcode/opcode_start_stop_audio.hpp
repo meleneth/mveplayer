@@ -1,3 +1,4 @@
+#pragma once
 #include<mve/opcode/opcode.hpp>
 
 namespace mve {

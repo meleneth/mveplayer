@@ -1,3 +1,4 @@
+#pragma once
 #include<log/log.hpp>
 #include<mve/hex_dump.hpp>
 #include<mve/opcode/opcode.hpp>

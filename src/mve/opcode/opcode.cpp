@@ -1,3 +1,5 @@
+#pragma once
+
 #include <mve/opcode/opcode.hpp>
 #include <mve/opcode/opcode_end_of_stream.hpp>
 #include <mve/opcode/opcode_end_of_chunk.hpp>

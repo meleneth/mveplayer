@@ -1,3 +1,4 @@
+#pragma once
 #include<mve/opcode/opcode.hpp>
 #include<mve/opcode/movie_player.hpp>
 
